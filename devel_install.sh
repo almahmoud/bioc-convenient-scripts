@@ -2,7 +2,7 @@
 
 if ! $(helm repo ls | grep -q bioc);
 then
-echo "yes"; fi
+helm repo add bioc https://github.com/Bioconductor/helm-charts/raw/devel; fi
 
 
 
