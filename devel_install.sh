@@ -12,6 +12,7 @@ do
         n) namespace=${OPTARG};;
         s) size=${OPTARG};;
         t) tag=${OPTARG};;
+	r) repository=${OTPARG};;
     esac
 done
 
@@ -28,8 +29,13 @@ fi
 
 
 if [ -z "$tag" ];
-	then echo "A container image tag must be specific with eg: -t devel";
-	exit;
+	# Set default tag
+	export tag="devel";
+fi
+
+if [ -z "$repository" ];
+	# Set default repo
+	export repository="bioconductor/bioconductor_docker";
 fi
 
 helm upgrade --create-namespace --install -n "$namespace" bioc-script bioc/bioconductor \
@@ -37,7 +43,8 @@ helm upgrade --create-namespace --install -n "$namespace" bioc-script bioc/bioco
    --set service.type=NodePort \
    --set persistence.storageClass=nfs \
    --set persistence.size="$size" \
-   --set image.tage="$tag"
+   --set image.repository="$repository" \
+   --set image.tag="$tag"
 
 
 kubectl wait --for=condition=available --timeout=600s  -n "$namespace" deployment/bioc-script-bioconductor
