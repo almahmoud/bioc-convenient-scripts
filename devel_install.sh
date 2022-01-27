@@ -1,20 +1,23 @@
 #!/bin/bash
 
+set -xe
+
 if ! $(helm repo ls | grep -q bioc);
   then helm repo add bioc https://github.com/Bioconductor/helm-charts/raw/devel
 fi
 
 
 
-while getopts n:s:t: flag
+while getopts "n:r:s:t:" flag
 do
     case "${flag}" in
         n) namespace=${OPTARG};;
         s) size=${OPTARG};;
+        r) repo=${OPTARG};;
         t) tag=${OPTARG};;
-    r) repository=${OTPARG};;
     esac
 done
+
 
 if [ -z "$namespace" ];
     then echo "A namespace must be specific with eg: -n myinitials-mynamespace";
@@ -29,13 +32,11 @@ fi
 
 
 if [ -z "$tag" ];
-    # Set default tag
-    export tag="devel";
+    then export tag="devel";
 fi
 
-if [ -z "$repository" ];
-    # Set default repo
-    export repository="bioconductor/bioconductor_docker";
+if [ -z "$repo" ];
+    then export repository="bioconductor/bioconductor_docker";
 fi
 
 helm upgrade --create-namespace --install -n "$namespace" bioc-script bioc/bioconductor \
@@ -43,7 +44,7 @@ helm upgrade --create-namespace --install -n "$namespace" bioc-script bioc/bioco
    --set service.type=NodePort \
    --set persistence.storageClass=nfs \
    --set persistence.size="$size" \
-   --set image.repository="$repository" \
+   --set image.repository="$repo" \
    --set image.tag="$tag"
 
 
