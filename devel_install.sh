@@ -44,6 +44,7 @@ helm upgrade --create-namespace --install -n "$namespace" bioc-script bioc/bioco
    --set service.type=NodePort \
    --set persistence.storageClass=nfs \
    --set persistence.size="$size" \
+   --set persistence.mountPath="/home/rstudio/nfs-data" \
    --set image.repository="$repo" \
    --set image.tag="$tag"
 
