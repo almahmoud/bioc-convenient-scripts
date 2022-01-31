@@ -8,13 +8,14 @@ fi
 
 
 
-while getopts "n:r:s:t:" flag
+while getopts "n:s:r:t:e:" flag
 do
     case "${flag}" in
         n) namespace=${OPTARG};;
         s) size=${OPTARG};;
         r) repo=${OPTARG};;
         t) tag=${OPTARG};;
+        e) extra=${OPTARG};;
     esac
 done
 
@@ -46,7 +47,7 @@ helm upgrade --create-namespace --install -n "$namespace" bioc-script bioc/bioco
    --set persistence.size="$size" \
    --set persistence.mountPath="/home/rstudio/nfs-data" \
    --set image.repository="$repo" \
-   --set image.tag="$tag"
+   --set image.tag="$tag" $extra
 
 
 kubectl wait --for=condition=available --timeout=600s  -n "$namespace" deployment/bioc-script-bioconductor
